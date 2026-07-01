@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simone — Project Planning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --white: #ffffff;
+  --n-50:  #fafafb;
+  --n-100: #f4f4f5;
+  --n-200: #e4e5e8;
+  --n-300: #c9cad0;
+  --n-400: #9b9da8;
+  --n-600: #63656e;
+  --n-700: #43454c;
+  --n-800: #313238;
+  --n-black: #1a1b1f;
+  --s-50:  #faf8f5;
+  --s-100: #f3eee7;
+  --s-200: #ebe2d6;
+  --s-300: #e1d3c1;
+  --s-800: #5b4f42;
+  --accent: #ffff90;
+
+  --c-dd:   #c4895a;
+  --c-dd-l: #f5e8dc;
+  --c-dd-m: #e0b98a;
+  --c-proc: #6e8fa8;
+  --c-proc-l: #dce8f0;
+  --c-proc-m: #adc5d8;
+  --c-land: #7a9b7a;
+  --c-land-l: #dfeadf;
+  --c-land-m: #adc8ad;
+
+  --left-w: 340px;   /* sticky left group width — user resizable */
+  --day-px: 4.5;     /* pixels per calendar day */
+  --row-min: 36px;
+}
+
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  color: var(--n-800);
+  background: var(--n-50);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── TOP NAV ── */
+.topbar {
+  height: 56px;
+  background: var(--white);
+  border-bottom: 1px solid var(--n-200);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 16px;
+  flex-shrink: 0;
+  z-index: 200;
+}
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--n-800);
+}
+.logo span { color: var(--s-800); }
+.divider-v { width: 1px; height: 20px; background: var(--n-200); }
+.breadcrumb {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 13px; color: var(--n-600);
+}
+.breadcrumb strong { color: var(--n-800); font-weight: 500; }
+.breadcrumb svg { width: 14px; height: 14px; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.btn {
+  height: 30px; padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid var(--n-200);
+  background: var(--white);
+  font-family: 'Jost', sans-serif;
+  font-size: 12px; font-weight: 500;
+  color: var(--n-700);
+  cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: background .15s, border-color .15s;
+}
+.btn:hover { background: var(--n-50); border-color: var(--n-300); }
+.btn-primary { background: var(--n-800); border-color: var(--n-800); color: var(--white); }
+.btn-primary:hover { background: var(--n-black); }
+.avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--accent); border: 1px solid #e6e67c;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; color: #5c5c30;
+}
+
+/* ── APP LAYOUT ── */
+.app-layout { display: flex; flex: 1; overflow: hidden; }
+
+/* ── ICON SIDEBAR ── */
+.icon-sidebar {
+  width: 52px;
+  background: var(--white);
+  border-right: 1px solid var(--n-black);
+  display: flex; flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+  gap: 2px;
+  flex-shrink: 0;
+  z-index: 100;
+}
+.nav-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--n-400);
+  transition: background .15s, color .15s;
+}
+.nav-icon:hover { background: var(--n-100); color: var(--n-700); }
+.nav-icon.active { background: var(--s-100); color: var(--s-800); }
+.nav-icon svg { width: 18px; height: 18px; }
+.nav-sep { width: 24px; height: 1px; background: var(--n-200); margin: 4px 0; }
+
+/* ── MAIN PANEL ── */
+.main-panel {
+  flex: 1; display: flex; flex-direction: column; overflow: hidden;
+  background: var(--white);
+}
+
+/* ── TOOLBAR ── */
+.toolbar {
+  height: 52px;
+  border-bottom: 1px solid var(--n-200);
+  display: flex; align-items: center;
+  padding: 0 20px; gap: 12px;
+  flex-shrink: 0;
+  background: var(--white);
+  z-index: 50;
+}
+.toolbar-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 500;
+  color: var(--n-800); letter-spacing: .02em;
+}
+.toolbar-range { font-size: 11px; color: var(--n-400); font-weight: 400; margin-left: 6px; }
+.view-tabs {
+  display: flex; background: var(--n-100);
+  border-radius: 8px; padding: 3px; gap: 2px; margin-left: 12px;
+}
+.vtab {
+  padding: 5px 14px; border-radius: 6px;
+  font-size: 12px; font-weight: 500; color: var(--n-600);
+  cursor: pointer; border: none; background: transparent;
+  font-family: 'Jost', sans-serif; white-space: nowrap;
+  transition: all .15s;
+}
+.vtab.active { background: var(--white); color: var(--n-800); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.legend { display: flex; align-items: center; gap: 12px; }
+.leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--n-600); }
+.leg-bar { width: 16px; height: 8px; border-radius: 2px; }
+.leg-diamond { width: 8px; height: 8px; transform: rotate(45deg); background: var(--c-dd); border-radius: 1px; }
+.today-btn {
+  height: 28px; padding: 0 10px;
+  border-radius: 5px; border: 1px solid var(--n-200);
+  background: var(--white);
+  font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 500; color: var(--n-600);
+  cursor: pointer; display: flex; align-items: center; gap: 5px;
+}
+.today-btn:hover { background: var(--n-50); }
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  height: 44px; flex-shrink: 0;
+  border-bottom: 1px solid var(--n-200);
+  background: var(--n-50);
+  display: flex; align-items: center;
+  padding: 0 20px; gap: 8px;
+  overflow-x: auto;
+}
+.filter-bar::-webkit-scrollbar { display: none; }
+.filter-label {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--n-400); white-space: nowrap; margin-right: 4px;
+}
+.filter-sep { width: 1px; height: 20px; background: var(--n-200); margin: 0 4px; }
+.proj-chip {
+  display: flex; align-items: center; gap: 7px;
+  padding: 4px 10px; border-radius: 20px;
+  border: 1px solid var(--n-200);
+  background: var(--white);
+  cursor: pointer; font-size: 12px; font-weight: 500;
+  color: var(--n-600); white-space: nowrap;
+  transition: all .15s; user-select: none;
+}
+.proj-chip:hover { border-color: var(--n-300); }
+.proj-chip.active { color: var(--n-800); border-color: transparent; }
+.proj-chip .chip-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.proj-chip .chip-check {
+  width: 14px; height: 14px; border-radius: 3px;
+  border: 1.5px solid currentColor; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.proj-chip.active .chip-check { background: currentColor; }
+.proj-chip.active .chip-check::after {
+  content: '';
+  width: 5px; height: 3px;
+  border-left: 1.5px solid var(--white);
+  border-bottom: 1.5px solid var(--white);
+  transform: rotate(-45deg) translate(0, -1px);
+  display: block;
+}
+.proj-chip .chip-count {
+  font-size: 10px; font-weight: 600;
+  background: var(--n-100); color: var(--n-600);
+  padding: 1px 5px; border-radius: 10px;
+}
+.proj-chip.active .chip-count {
+  background: rgba(255,255,255,.3); color: inherit;
+}
+.filter-clear {
+  font-size: 11px; color: var(--n-400); cursor: pointer;
+  padding: 2px 6px; border-radius: 4px;
+  border: none; background: transparent;
+  font-family: 'Jost', sans-serif;
+  transition: color .15s;
+}
+.filter-clear:hover { color: var(--n-700); }
+
+/* project group header row */
+.proj-header-row {
+  display: flex;
+  border-bottom: 1px solid var(--n-200);
+  background: var(--n-50);
+}
+.proj-header-left {
+  width: var(--left-w); flex-shrink: 0;
+  position: sticky; left: 0; z-index: 15;
+  background: var(--n-50);
+  border-right: 1px solid var(--n-200);
+  display: flex; align-items: center;
+  padding: 0 14px; gap: 8px;
+  height: 34px;
+}
+.proj-header-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.proj-header-name {
+  font-size: 11.5px; font-weight: 600;
+  letter-spacing: .02em; color: var(--n-700);
+}
+.proj-header-meta { font-size: 10px; color: var(--n-400); margin-left: auto; }
+.proj-header-right { flex: 1; background: var(--n-50); height: 34px; position: relative; }
+
+/* ── GANTT OUTER ── */
+#task-view { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+
+/* single overflow scroll that handles both X and Y */
+.gantt-scroll {
+  flex: 1; overflow: auto;
+  position: relative;
+}
+.gantt-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+.gantt-scroll::-webkit-scrollbar-track { background: var(--n-100); }
+.gantt-scroll::-webkit-scrollbar-thumb { background: var(--n-300); border-radius: 3px; }
+
+/* ── GANTT TABLE (rows = flex rows) ── */
+.gantt-table {
+  display: flex; flex-direction: column;
+  min-width: calc(var(--left-w) + 1800px); /* enough for timeline */
+}
+
+/* ── HEADER ROW ── */
+.gantt-thead {
+  position: sticky; top: 0; z-index: 40;
+  display: flex;
+  background: var(--n-50);
+  border-bottom: 1px solid var(--n-200);
+}
+.thead-left {
+  width: var(--left-w); flex-shrink: 0;
+  position: sticky; left: 0; z-index: 41;
+  background: var(--n-50);
+  border-right: 1px solid var(--n-200);
+  display: flex; align-items: flex-end;
+  padding: 0 0 0 16px;
+}
+.thead-cols {
+  display: grid;
+  grid-template-columns: 1fr 64px 64px 64px;
+  width: 100%;
+  padding-bottom: 10px;
+}
+.thead-col {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--n-400);
+  padding-right: 8px;
+}
+.thead-timeline {
+  flex: 1;
+  display: flex; flex-direction: column;
+}
+.months-row {
+  height: 38px; display: flex;
+  border-bottom: 1px solid var(--n-200);
+}
+.month-cell {
+  flex-shrink: 0; height: 100%;
+  border-right: 1px solid var(--n-200);
+  display: flex; align-items: center; padding: 0 10px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .06em; color: var(--n-600);
+  text-transform: uppercase;
+}
+.weeks-row { height: 38px; display: flex; }
+.week-cell {
+  flex-shrink: 0; height: 100%;
+  border-right: 1px solid var(--n-100);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--n-400);
+}
+
+/* ── DATA ROW ── */
+.g-row {
+  display: flex;
+  border-bottom: 1px solid var(--n-100);
+  min-height: var(--row-min);
+}
+.g-row:hover .row-left { background: var(--n-50); }
+.g-row.is-phase:hover .row-left { background: var(--s-100); }
+.g-row.is-section:hover .row-left { background: var(--n-50); }
+
+/* LEFT STICKY CELL */
+.row-left {
+  width: var(--left-w); flex-shrink: 0;
+  position: sticky; left: 0; z-index: 10;
+  background: var(--white);
+  border-right: 1px solid var(--n-200);
+  display: grid;
+  grid-template-columns: 1fr 64px 64px 64px;
+  align-items: center;
+  padding: 6px 0 6px 0;
+  transition: background .1s;
+}
+.g-row.is-phase .row-left { background: var(--s-50); }
+
+/* phase accent stripe */
+.phase-stripe {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; border-radius: 0 2px 2px 0;
+}
+
+/* name cell */
+.name-cell {
+  display: flex; align-items: flex-start;
+  padding-right: 8px; position: relative;
+  min-height: 24px;
+}
+.name-indent { flex-shrink: 0; }
+.collapse-btn {
+  width: 18px; height: 18px; border-radius: 4px;
+  border: 1px solid var(--n-200); background: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; margin-right: 5px; margin-top: 1px;
+  transition: all .15s;
+}
+.collapse-btn:hover { border-color: var(--n-300); background: var(--n-50); }
+.collapse-btn svg { width: 10px; height: 10px; color: var(--n-600); transition: transform .2s; }
+.collapse-btn.is-closed svg { transform: rotate(-90deg); }
+.name-spacer { width: 23px; flex-shrink: 0; }
+.m-diamond {
+  width: 9px; height: 9px; transform: rotate(45deg);
+  border-radius: 1px; flex-shrink: 0;
+  margin-right: 7px; margin-top: 5px;
+}
+.name-text {
+  font-size: 12.5px; color: var(--n-700);
+  line-height: 1.4;
+  word-break: break-word;
+}
+.is-phase  .name-text { font-weight: 600; color: var(--n-800); font-size: 13px; }
+.is-section .name-text { font-weight: 500; }
+.is-milestone .name-text { font-style: italic; color: var(--n-600); font-size: 12px; }
+
+/* meta cells */
+.meta-cell {
+  font-size: 11px; color: var(--n-400);
+  padding-right: 8px; align-self: center;
+  line-height: 1.3;
+}
+.date-cell {
+  font-size: 11px; color: var(--n-500, #8a8c96);
+  font-variant-numeric: tabular-nums;
+  align-self: center;
+  padding-right: 6px;
+}
+
+/* ── RIGHT GANTT AREA ── */
+.row-right {
+  flex: 1; position: relative;
+  min-height: var(--row-min);
+}
+
+/* ── GANTT BARS ── */
+.g-bar {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: filter .15s;
+  display: flex; align-items: center;
+  overflow: hidden; padding: 0 6px;
+}
+.g-bar:hover { filter: brightness(1.06); }
+.g-bar.bar-phase   { height: 22px; border-radius: 5px; }
+.g-bar.bar-section { height: 17px; border-radius: 4px; }
+.g-bar.bar-deliv   { height: 14px; border-radius: 3px; }
+.g-bar.bar-mile    { width: 0!important; height: 0; background: none!important; border: none!important; overflow: visible; padding: 0; }
+
+.bar-label {
+  font-size: 10px; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* milestone diamond */
+.mile-diamond {
+  position: absolute; left: -6px; top: 50%; margin-top: -6px;
+  width: 12px; height: 12px;
+  transform: rotate(45deg); border-radius: 2px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+.mile-label {
+  position: absolute; left: 12px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 10.5px; font-weight: 500; color: var(--n-600);
+  white-space: nowrap;
+}
+
+/* grid lines inside row-right (month verticals) */
+.grid-line {
+  position: absolute; top: 0; bottom: 0; width: 1px;
+  background: var(--n-200); pointer-events: none; z-index: 0;
+}
+.today-line {
+  position: absolute; top: 0; bottom: 0; width: 2px;
+  background: #e05a2b; opacity: .75; pointer-events: none; z-index: 5;
+}
+
+/* ── COLUMN RESIZER ── */
+#colResizer {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 16px;
+  left: calc(var(--left-w) - 8px);
+  cursor: col-resize;
+  z-index: 300;
+  background: transparent;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+/* always-visible 2px line */
+#colResizer::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 7px;
+  width: 2px;
+  background: var(--n-200);
+  transition: background .15s;
+}
+/* grip dots shown in the header area */
+#colResizer::after {
+  content: '⋮⋮';
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  letter-spacing: -2px;
+  color: var(--n-400);
+  background: var(--white);
+  border: 1px solid var(--n-200);
+  border-radius: 3px;
+  padding: 2px 3px;
+  line-height: 1;
+  pointer-events: none;
+}
+#colResizer:hover::before { background: var(--s-800); }
+#colResizer:hover::after  { color: var(--s-800); border-color: var(--s-300); }
+#colResizer.dragging::before { background: var(--s-800); }
+body.col-resizing { cursor: col-resize !important; user-select: none !important; }
+
+/* ── TOOLTIP ── */
+.gantt-tip {
+  position: fixed; background: var(--n-800); color: var(--white);
+  padding: 8px 12px; border-radius: 6px;
+  font-size: 11.5px; line-height: 1.5;
+  pointer-events: none; z-index: 9999;
+  max-width: 260px; box-shadow: 0 4px 16px rgba(0,0,0,.2);
+  display: none;
+}
+.gantt-tip.show { display: block; }
+.tip-title { font-weight: 600; margin-bottom: 2px; }
+.tip-meta  { color: var(--n-300); font-size: 11px; }
+
+/* ── SPECBOOK PLACEHOLDER ── */
+#specbook-view {
+  display: none; flex: 1;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; color: var(--n-400);
+}
+#specbook-view h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 400; color: var(--n-600);
+}
+#specbook-view p {
+  font-size: 13px; max-width: 340px;
+  text-align: center; line-height: 1.6;
+}
+#specbook-view svg { width: 48px; height: 48px; color: var(--n-300); }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topbar">
+  <div class="logo">Si<span>mo</span>ne</div>
+  <div class="divider-v"></div>
+  <div class="breadcrumb">
+    <span>Projects</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    <strong>NeueHouse — Adelphi London</strong>
+  </div>
+  <div class="topbar-right">
+    <button class="btn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Share
+    </button>
+    <button class="btn btn-primary">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Phase
+    </button>
+    <div class="avatar">RS</div>
+  </div>
+</nav>
+
+<!-- APP LAYOUT -->
+<div class="app-layout">
+
+  <!-- MAIN -->
+  <main class="main-panel">
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="toolbar-title">Planning <span class="toolbar-range">Mar 2015 – Mar 2016</span></div>
+      <div class="view-tabs">
+        <button class="vtab active" onclick="switchView('task',this)">Task Gantt</button>
+        <button class="vtab" onclick="switchView('specbook',this)">Specbook Gantt</button>
+      </div>
+      <div class="toolbar-right">
+        <div class="legend">
+          <div class="leg"><div class="leg-bar" style="background:var(--c-dd)"></div>DD / CD</div>
+          <div class="leg"><div class="leg-bar" style="background:var(--c-proc)"></div>Procurement</div>
+          <div class="leg"><div class="leg-bar" style="background:var(--c-land)"></div>Landlord</div>
+          <div class="leg"><div class="leg-diamond"></div>Milestone</div>
+        </div>
+        <button class="today-btn" onclick="scrollToToday()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Today
+        </button>
+        <button class="btn" onclick="expandAll()">Expand All</button>
+        <button class="btn" onclick="collapseAll()">Collapse All</button>
+      </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar" id="filterBar"></div>
+
+    <!-- TASK GANTT VIEW -->
+    <div id="task-view">
+      <!-- persistent column resize handle — lives outside scroll, never recreated -->
+      <div id="colResizer" title="Drag to resize"></div>
+      <div class="gantt-scroll" id="ganttScroll">
+        <div class="gantt-table" id="ganttTable"></div>
+      </div>
+    </div>
+
+    <!-- SPECBOOK VIEW -->
+    <div id="specbook-view">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      <h3>Specbook Gantt View</h3>
+      <p>Track product lead times, production schedules, transit windows, and warehouse arrival dates across all specified items.</p>
+      <button class="btn btn-primary" style="margin-top:8px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Product Schedule
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- TOOLTIP -->
+<div class="gantt-tip" id="tip"></div>
+
+<script>
+// ── TIMELINE CONFIG ───────────────────────────────────────────────
+const TL_START = '2015-03-30';
+const TL_END   = '2016-03-06';
+const DAY_PX   = 4.5;
+
+function toUTC(s) {
+  const [y,m,d] = s.split('-').map(Number);
+  return Date.UTC(y, m-1, d);
+}
+function dayOffset(s) {
+  return Math.round((toUTC(s) - toUTC(TL_START)) / 86400000);
+}
+function px(s) { return dayOffset(s) * DAY_PX; }
+function daysPx(n) { return n * DAY_PX; }
+function totalDays() { return Math.round((toUTC(TL_END) - toUTC(TL_START)) / 86400000); }
+function fmtDate(s) { const [,m,d] = s.split('-').map(Number); return `${d}/${m}`; }
+
+// ── PROJECT REGISTRY ─────────────────────────────────────────────
+// Each project has an id, display name, accent color, and tasks array.
+const PROJECT_COLORS = ['#c4895a','#6e8fa8','#8b7ab8','#5f9e8f','#b8705a'];
+
+const PROJECTS = [
+ {
+  id:'neuehouse', name:'NeueHouse — Adelphi London',
+  color: PROJECT_COLORS[0],
+  tasks: null, // filled below
+ },
+ {
+  id:'soho', name:'Soho House — Madison Ave',
+  color: PROJECT_COLORS[1],
+  tasks: [
+    { id:'sh-dd', type:'phase', phase:'shdd',
+      name:'Design Development', dur:'80 days', start:'2015-04-15', end:'2015-07-31',
+      ch:[
+        { id:'sh-arch', type:'section', phase:'shdd', name:'Architecture & Interiors', dur:'80 days', start:'2015-04-15', end:'2015-07-31',
+          ch:[
+            { id:'sh-dd1', type:'deliverable', phase:'shdd', name:'Schematic Design', dur:'5 wks', start:'2015-04-15', end:'2015-05-20' },
+            { id:'sh-dd2', type:'deliverable', phase:'shdd', name:'Design Development', dur:'6 wks', start:'2015-05-21', end:'2015-07-02' },
+            { id:'sh-dd3', type:'deliverable', phase:'shdd', name:'Construction Documents', dur:'4 wks', start:'2015-07-06', end:'2015-07-31' },
+            { id:'m-sh1', type:'milestone', phase:'shdd', name:'Client Design Approval', dur:'0 days', start:'2015-07-31', end:'2015-07-31' },
+          ]
+        },
+        { id:'sh-ff', type:'section', phase:'shdd', name:'Furniture, Fixtures & Equipment', dur:'60 days', start:'2015-05-01', end:'2015-07-18',
+          ch:[
+            { id:'sh-ff1', type:'deliverable', phase:'shdd', name:'FF&E Concept Presentation', dur:'3 wks', start:'2015-05-01', end:'2015-05-22' },
+            { id:'sh-ff2', type:'deliverable', phase:'shdd', name:'FF&E Specifications', dur:'5 wks', start:'2015-05-25', end:'2015-06-27' },
+            { id:'sh-ff3', type:'deliverable', phase:'shdd', name:'Procurement Coordination', dur:'3 wks', start:'2015-06-29', end:'2015-07-18' },
+          ]
+        },
+      ]
+    },
+    { id:'sh-proc', type:'phase', phase:'shproc',
+      name:'Procurement & Construction',
+      dur:'180 days', start:'2015-08-01', end:'2016-02-12',
+      ch:[
+        { id:'sh-p1', type:'deliverable', phase:'shproc', name:'Contractor Bidding & Selection', dur:'3 wks', start:'2015-08-01', end:'2015-08-22' },
+        { id:'sh-p2', type:'deliverable', phase:'shproc', name:'Permits & Approvals', dur:'4 wks', start:'2015-08-24', end:'2015-09-19' },
+        { id:'m-sh-site', type:'milestone', phase:'shproc', name:'Construction Start', dur:'0 days', start:'2015-09-21', end:'2015-09-21' },
+        { id:'sh-p3', type:'deliverable', phase:'shproc', name:'Construction Phase', dur:'18 wks', start:'2015-09-21', end:'2016-01-30' },
+        { id:'sh-p4', type:'deliverable', phase:'shproc', name:'Punch List & Closeout', dur:'2 wks', start:'2016-02-01', end:'2016-02-12' },
+        { id:'m-sh-open', type:'milestone', phase:'shproc', name:'Grand Opening', dur:'0 days', start:'2016-02-12', end:'2016-02-12' },
+      ]
+    },
+  ],
+ },
+ {
+  id:'nobu', name:'Nobu Hotel — Los Angeles',
+  color: PROJECT_COLORS[2],
+  tasks: [
+    { id:'nb-dd', type:'phase', phase:'nbdd',
+      name:'Design & Documentation', dur:'110 days', start:'2015-05-11', end:'2015-09-12',
+      ch:[
+        { id:'nb-concept', type:'section', phase:'nbdd', name:'Concept & Schematic', dur:'50 days', start:'2015-05-11', end:'2015-06-30',
+          ch:[
+            { id:'nb-c1', type:'deliverable', phase:'nbdd', name:'Concept Development', dur:'4 wks', start:'2015-05-11', end:'2015-06-05' },
+            { id:'nb-c2', type:'deliverable', phase:'nbdd', name:'Schematic Design Review', dur:'4 wks', start:'2015-06-08', end:'2015-06-30' },
+            { id:'m-nb1', type:'milestone', phase:'nbdd', name:'Concept Sign-off', dur:'0 days', start:'2015-06-30', end:'2015-06-30' },
+          ]
+        },
+        { id:'nb-cd', type:'section', phase:'nbdd', name:'Construction Documents', dur:'60 days', start:'2015-07-06', end:'2015-09-12',
+          ch:[
+            { id:'nb-cd1', type:'deliverable', phase:'nbdd', name:'50% Construction Documents', dur:'4 wks', start:'2015-07-06', end:'2015-07-31' },
+            { id:'nb-cd2', type:'deliverable', phase:'nbdd', name:'100% Construction Documents', dur:'6 wks', start:'2015-08-03', end:'2015-09-12' },
+            { id:'m-nb2', type:'milestone', phase:'nbdd', name:'Permit Submission', dur:'0 days', start:'2015-09-12', end:'2015-09-12' },
+          ]
+        },
+      ]
+    },
+    { id:'nb-proc', type:'phase', phase:'nbproc',
+      name:'Construction', dur:'140 days', start:'2015-10-05', end:'2016-02-26',
+      ch:[
+        { id:'nb-p1', type:'deliverable', phase:'nbproc', name:'Site Mobilisation', dur:'2 wks', start:'2015-10-05', end:'2015-10-16' },
+        { id:'m-nb-site', type:'milestone', phase:'nbproc', name:'Construction Start', dur:'0 days', start:'2015-10-19', end:'2015-10-19' },
+        { id:'nb-p2', type:'deliverable', phase:'nbproc', name:'Structure & Shell', dur:'8 wks', start:'2015-10-19', end:'2015-12-12' },
+        { id:'nb-p3', type:'deliverable', phase:'nbproc', name:'Fit-Out & Finishes', dur:'8 wks', start:'2015-12-14', end:'2016-02-05' },
+        { id:'nb-p4', type:'deliverable', phase:'nbproc', name:'Commissioning & Handover', dur:'3 wks', start:'2016-02-08', end:'2016-02-26' },
+        { id:'m-nb-open', type:'milestone', phase:'nbproc', name:'Hotel Opening', dur:'0 days', start:'2016-02-26', end:'2016-02-26' },
+      ]
+    },
+  ],
+ },
+];
+
+// ── DATA ──────────────────────────────────────────────────────────
+const TASKS = [
+  { id:'dd', type:'phase', phase:'dd',
+    name:'Developed Design (DD) & Technical Design (CD)',
+    dur:'100 days', start:'2015-03-30', end:'2015-08-17',
+    ch:[
+      { id:'arch', type:'section', phase:'dd',
+        name:'Programme: Architectural & Building Services',
+        dur:'90 days', start:'2015-03-30', end:'2015-07-31',
+        ch:[
+          { id:'dd-arch', type:'deliverable', phase:'dd',
+            name:'Developed Design (DD) — Architectural & MEP',
+            dur:'9.2 wks', start:'2015-03-30', end:'2015-06-01',
+            ch:[
+              { id:'m-dd75', type:'milestone', phase:'dd', name:'NeueHouse Review & Approval (75%)', dur:'2 days', start:'2015-05-14', end:'2015-05-15' },
+              { id:'m-dd100', type:'milestone', phase:'dd', name:'NeueHouse Review & Approval (100%)', dur:'2 wks', start:'2015-05-25', end:'2015-06-05' },
+              { id:'m-handover', type:'milestone', phase:'dd', name:'Lead Designer Handover Period', dur:'1 wk', start:'2015-06-01', end:'2015-06-05' },
+            ]
+          },
+          { id:'cd-arch', type:'deliverable', phase:'dd',
+            name:'Technical Design (CD) — Architectural & MEP',
+            dur:'8 wks', start:'2015-06-08', end:'2015-07-31',
+            ch:[
+              { id:'m-cd50', type:'milestone', phase:'dd', name:'NeueHouse Review & Approval (50%)', dur:'2 days', start:'2015-07-01', end:'2015-07-02' },
+              { id:'m-cd100', type:'milestone', phase:'dd', name:'NeueHouse Review & Approval (100%)', dur:'1 wk', start:'2015-07-27', end:'2015-07-31' },
+            ]
+          },
+        ]
+      },
+      { id:'struct', type:'section', phase:'dd',
+        name:'Structural',
+        dur:'82 days', start:'2015-04-23', end:'2015-08-17',
+        ch:[
+          { id:'m-struct0', type:'milestone', phase:'dd', name:'Review of Proposals with Architect', dur:'0 days', start:'2015-04-23', end:'2015-04-23' },
+          { id:'s1', type:'deliverable', phase:'dd', name:'Initial Design Review — New Structural Openings', dur:'15 days', start:'2015-04-27', end:'2015-05-15' },
+          { id:'s2', type:'deliverable', phase:'dd', name:'Agree Approach for Stair Openings', dur:'5 days', start:'2015-05-18', end:'2015-05-22' },
+          { id:'s3', type:'deliverable', phase:'dd', name:'Agree Approach for Spanish Steps', dur:'5 days', start:'2015-05-18', end:'2015-05-22' },
+          { id:'m-stair', type:'milestone', phase:'dd', name:'Setting Out of Stair Openings Issued', dur:'0 days', start:'2015-05-25', end:'2015-05-25' },
+          { id:'s4', type:'deliverable', phase:'dd', name:'Detail Design of Floor Openings', dur:'30 days', start:'2015-05-25', end:'2015-07-03' },
+          { id:'s5', type:'deliverable', phase:'dd', name:'Drawings for Floor Openings', dur:'10 days', start:'2015-07-06', end:'2015-07-17' },
+          { id:'s6', type:'deliverable', phase:'dd', name:'Specifications for Structural Works', dur:'15 days', start:'2015-06-15', end:'2015-07-03' },
+          { id:'s7', type:'deliverable', phase:'dd', name:'MEP — Advise Builders Work Requirements', dur:'20 days', start:'2015-05-11', end:'2015-06-05' },
+          { id:'s8', type:'deliverable', phase:'dd', name:'Review of Builders Work incl. Site Inspections', dur:'40 days', start:'2015-05-18', end:'2015-07-10' },
+          { id:'s9', type:'deliverable', phase:'dd', name:'Produce Design & Details for Builders Work', dur:'30 days', start:'2015-06-29', end:'2015-08-07' },
+          { id:'s10', type:'deliverable', phase:'dd', name:'Review of Heavy Items to be Placed on Floor (freezers, server racks, storage)', dur:'30 days', start:'2015-05-11', end:'2015-06-19' },
+          { id:'m-structend', type:'milestone', phase:'dd', name:'Issue Construction Information', dur:'0 days', start:'2015-08-17', end:'2015-08-17' },
+        ]
+      },
+      { id:'lighting', type:'section', phase:'dd',
+        name:'Lighting',
+        dur:'50 days', start:'2015-04-27', end:'2015-07-03',
+        ch:[
+          { id:'l1', type:'deliverable', phase:'dd', name:'Schematic Design', dur:'5 wks', start:'2015-04-27', end:'2015-05-29' },
+          { id:'l2', type:'deliverable', phase:'dd', name:'Developed Design', dur:'3 wks', start:'2015-06-01', end:'2015-06-19' },
+          { id:'l3', type:'deliverable', phase:'dd', name:'Technical Design', dur:'2 wks', start:'2015-06-22', end:'2015-07-03' },
+        ]
+      },
+      { id:'catering', type:'section', phase:'dd',
+        name:'Catering',
+        dur:'70 days', start:'2015-05-11', end:'2015-08-14',
+        ch:[
+          { id:'c1', type:'deliverable', phase:'dd', name:'Schematic Design', dur:'5 wks', start:'2015-05-11', end:'2015-06-12' },
+          { id:'c2', type:'deliverable', phase:'dd', name:'Developed Design', dur:'4 wks', start:'2015-06-15', end:'2015-07-10' },
+          { id:'c3', type:'deliverable', phase:'dd', name:'Technical Design', dur:'5 wks', start:'2015-07-13', end:'2015-08-14' },
+        ]
+      },
+      { id:'it', type:'section', phase:'dd',
+        name:'IT — Infrastructure & Circuits',
+        dur:'60 days', start:'2015-05-11', end:'2015-07-31',
+        ch:[
+          { id:'it1', type:'deliverable', phase:'dd', name:'Schematic Design', dur:'4 wks', start:'2015-05-11', end:'2015-06-05' },
+          { id:'it2', type:'deliverable', phase:'dd', name:'Developed Design', dur:'3 wks', start:'2015-06-22', end:'2015-07-10' },
+          { id:'it3', type:'deliverable', phase:'dd', name:'Technical Design', dur:'3 wks', start:'2015-07-13', end:'2015-07-31' },
+        ]
+      },
+      { id:'av', type:'section', phase:'dd',
+        name:'AV',
+        dur:'45 days', start:'2015-05-18', end:'2015-07-17',
+        ch:[
+          { id:'av1', type:'deliverable', phase:'dd', name:'Developed Design (Schematic)', dur:'4 wks', start:'2015-05-18', end:'2015-06-12' },
+          { id:'av2', type:'deliverable', phase:'dd', name:'Technical Design', dur:'5 wks', start:'2015-06-15', end:'2015-07-17' },
+        ]
+      },
+      { id:'theatre', type:'section', phase:'dd',
+        name:'Theatre',
+        dur:'46 days', start:'2015-05-18', end:'2015-07-20',
+        ch:[
+          { id:'th1', type:'deliverable', phase:'dd', name:'Developed Design (Schematic)', dur:'3.2 wks', start:'2015-05-18', end:'2015-06-08' },
+          { id:'th2', type:'deliverable', phase:'dd', name:'Technical Design', dur:'6 wks', start:'2015-06-09', end:'2015-07-20' },
+        ]
+      },
+      { id:'security', type:'section', phase:'dd',
+        name:'Security',
+        dur:'60 days', start:'2015-05-11', end:'2015-07-31',
+        ch:[
+          { id:'sec1', type:'deliverable', phase:'dd', name:'Schematic Design', dur:'4 wks', start:'2015-05-11', end:'2015-06-05' },
+          { id:'sec2', type:'deliverable', phase:'dd', name:'Developed Design', dur:'4 wks', start:'2015-06-08', end:'2015-07-03' },
+          { id:'sec3', type:'deliverable', phase:'dd', name:'Technical Design', dur:'4 wks', start:'2015-07-06', end:'2015-07-31' },
+        ]
+      },
+    ]
+  },
+  { id:'proc', type:'phase', phase:'proc',
+    name:'Procurement',
+    dur:'230 days', start:'2015-04-20', end:'2016-03-03',
+    ch:[
+      { id:'p1', type:'deliverable', phase:'proc', name:'Pre-Qualification of Main Contractor', dur:'15 days', start:'2015-04-20', end:'2015-05-08' },
+      { id:'p2', type:'deliverable', phase:'proc', name:'Pre-Qualification Stage Gate Approval by NH', dur:'5 days', start:'2015-05-11', end:'2015-05-15' },
+      { id:'m-meet', type:'milestone', phase:'proc', name:'Pre-Qualification Stage Meet & Greet', dur:'0 days', start:'2015-05-20', end:'2015-05-20' },
+      { id:'p3', type:'deliverable', phase:'proc', name:'Appointment of Construction Lawyer', dur:'1.6 wks', start:'2015-06-10', end:'2015-06-19' },
+      { id:'p4', type:'deliverable', phase:'proc', name:'Production of the Contract Amendments', dur:'4 wks', start:'2015-06-22', end:'2015-07-17' },
+      { id:'m-contract', type:'milestone', phase:'proc', name:'Issue Contract Amendments to Contractors', dur:'0 days', start:'2015-07-17', end:'2015-07-17' },
+      { id:'p5', type:'deliverable', phase:'proc', name:'Feedback from Contractors — Pre-Tender Release', dur:'1 wk', start:'2015-07-20', end:'2015-07-24' },
+      { id:'p6', type:'deliverable', phase:'proc', name:'Preparation of Tender Package', dur:'25 days', start:'2015-06-23', end:'2015-07-27' },
+      { id:'m-tender', type:'milestone', phase:'proc', name:'Tender Package Available', dur:'0 days', start:'2015-07-31', end:'2015-07-31' },
+      { id:'p7', type:'deliverable', phase:'proc', name:'Tender Period', dur:'20 days', start:'2015-08-03', end:'2015-08-28' },
+      { id:'p8', type:'deliverable', phase:'proc', name:'Interviews, Negotiations & Contractor Selection', dur:'10 days', start:'2015-08-31', end:'2015-09-11' },
+      { id:'p9', type:'deliverable', phase:'proc', name:'Mobilisation', dur:'15 days', start:'2015-09-14', end:'2015-10-02' },
+      { id:'p10', type:'deliverable', phase:'proc', name:'Establish Site Set-Up by Main Contractor', dur:'5 days', start:'2015-09-28', end:'2015-10-02' },
+      { id:'m-site', type:'milestone', phase:'proc', name:'Start on Site', dur:'0 wks', start:'2015-10-02', end:'2015-10-02' },
+      { id:'m-complete', type:'milestone', phase:'proc', name:'Construction Completion (22-week programme)', dur:'0 days', start:'2016-03-03', end:'2016-03-03' },
+    ]
+  },
+  { id:'landlord', type:'phase', phase:'land',
+    name:'Landlord Base Build Completion Dates',
+    dur:'16 days', start:'2015-07-17', end:'2015-08-10',
+    ch:[
+      { id:'m-l1', type:'milestone', phase:'land', name:'Level 1 (Practical Completion)', dur:'0 days', start:'2015-07-17', end:'2015-07-17' },
+      { id:'m-l2', type:'milestone', phase:'land', name:'Level 2 (Practical Completion)', dur:'0 days', start:'2015-07-17', end:'2015-07-17' },
+      { id:'m-l3', type:'milestone', phase:'land', name:'Level 3 (Practical Completion)', dur:'0 days', start:'2015-08-10', end:'2015-08-10' },
+    ]
+  },
+];
+
+// Wire NeueHouse tasks into PROJECTS
+PROJECTS[0].tasks = TASKS;
+
+// ── PHASE PALETTE (per project color) ────────────────────────────
+// For named phases (dd/proc/land) use the original palette;
+// for dynamically-colored project phases, derive from project color.
+const NAMED_PAL = {
+  dd:     { bar:'#c4895a', mid:'#dba978', light:'#f5e8dc', text:'rgba(255,255,255,.95)', darkText:'#7a4e28' },
+  proc:   { bar:'#6e8fa8', mid:'#8eaec4', light:'#dce8f0', text:'rgba(255,255,255,.95)', darkText:'#3a5f78' },
+  land:   { bar:'#7a9b7a', mid:'#98ba98', light:'#dfeadf', text:'rgba(255,255,255,.95)', darkText:'#3a6e3a' },
+};
+
+// Build palette for a hex color
+function makePal(hex) {
+  return { bar: hex, mid: hex + 'cc', light: hex + '22', text:'rgba(255,255,255,.95)', darkText: hex };
+}
+
+// Gather all project palettes
+const PAL = { ...NAMED_PAL };
+PROJECTS.forEach(p => {
+  if (!PAL[p.id]) PAL[p.id] = makePal(p.color);
+  // also assign palette keys for each unique phase id in the project
+  function walk(tasks) { tasks.forEach(t => { if(!PAL[t.phase]) PAL[t.phase]=makePal(p.color); if(t.ch)walk(t.ch); }); }
+  if (p.tasks) walk(p.tasks);
+});
+
+function barColor(t) {
+  const p = PAL[t.phase] || makePal('#999');
+  if (t.type === 'phase')   return p.bar;
+  if (t.type === 'section') return p.mid || p.bar;
+  return p.light || p.bar + '33';
+}
+function barTextColor(t) {
+  const p = PAL[t.phase] || makePal('#999');
+  return (t.type === 'phase' || t.type === 'section') ? p.text : (p.darkText || p.bar);
+}
+
+// ── FILTER STATE ──────────────────────────────────────────────────
+const activeProjects = new Set(PROJECTS.map(p => p.id)); // all on by default
+
+// ── COLLAPSE STATE ────────────────────────────────────────────────
+const collapsed = new Set();
+
+// ── FLATTEN ───────────────────────────────────────────────────────
+function flatten(items, depth=0, hidden=false) {
+  let out = [];
+  for (const item of items) {
+    out.push({ ...item, depth, hidden });
+    if (item.ch && item.ch.length) {
+      out = out.concat(flatten(item.ch, depth+1, hidden || collapsed.has(item.id)));
+    }
+  }
+  return out;
+}
+
+// ── TIMELINE HEADER ───────────────────────────────────────────────
+function buildHeader() {
+  // months
+  const months = [];
+  let [cy, cm] = TL_START.split('-').map(Number);
+  const [ey, em] = TL_END.split('-').map(Number);
+  while (cy < ey || (cy===ey && cm<=em)) {
+    months.push({ y:cy, m:cm });
+    cm++; if(cm>12){cm=1;cy++;}
+  }
+  const MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const mr = document.createElement('div'); mr.className = 'months-row';
+  for (let i=0; i<months.length; i++) {
+    const { y, m } = months[i];
+    const s = `${y}-${String(m).padStart(2,'0')}-01`;
+    let e; if(i<months.length-1){const nx=months[i+1];e=`${nx.y}-${String(nx.m).padStart(2,'0')}-01`;}else{e=TL_END;}
+    const w = Math.max(0, px(e) - Math.max(0, px(s)));
+    if(w<=0) continue;
+    const c = document.createElement('div'); c.className='month-cell';
+    c.style.width = w+'px';
+    c.textContent = MN[m-1]+' '+String(y).slice(2);
+    mr.appendChild(c);
+  }
+  // weeks
+  const wr = document.createElement('div'); wr.className='weeks-row';
+  let wms = toUTC(TL_START);
+  const tlems = toUTC(TL_END);
+  const sd = new Date(wms); const dow = sd.getUTCDay();
+  if(dow!==1) wms -= (dow===0?6:dow-1)*86400000;
+  while(wms<=tlems){
+    const d=new Date(wms); const ds=d.getUTCDate();
+    const c=document.createElement('div'); c.className='week-cell';
+    c.style.width = daysPx(7)+'px'; c.textContent=ds;
+    wr.appendChild(c); wms+=7*86400000;
+  }
+  const tl = document.createElement('div'); tl.className='thead-timeline';
+  tl.appendChild(mr); tl.appendChild(wr);
+  return tl;
+}
+
+// ── MONTH GRID LINE POSITIONS ─────────────────────────────────────
+function monthPositions() {
+  const pos = [];
+  let [cy,cm] = TL_START.split('-').map(Number);
+  const [ey,em] = TL_END.split('-').map(Number);
+  cm++; if(cm>12){cm=1;cy++;}
+  while(toUTC(`${cy}-${String(cm).padStart(2,'0')}-01`) <= toUTC(TL_END)){
+    pos.push(px(`${cy}-${String(cm).padStart(2,'0')}-01`));
+    cm++; if(cm>12){cm=1;cy++;}
+  }
+  return pos;
+}
+
+const MONTH_PX = monthPositions();
+const TODAY_PX = px('2015-06-10'); // document date Wed 10/06/15
+
+// ── RENDER ROW ────────────────────────────────────────────────────
+function renderRow(t) {
+  const row = document.createElement('div');
+  row.className = 'g-row';
+  if(t.type==='phase') row.classList.add('is-phase');
+  if(t.type==='section') row.classList.add('is-section');
+  if(t.type==='milestone') row.classList.add('is-milestone');
+
+  // ── LEFT ──────────────────────────────────────────────────────
+  const left = document.createElement('div'); left.className='row-left';
+  left.style.position = 'relative';
+
+  // phase accent stripe
+  if(t.type==='phase'||t.type==='section'){
+    const stripe = document.createElement('div'); stripe.className='phase-stripe';
+    stripe.style.background = PAL[t.phase].bar;
+    left.appendChild(stripe);
+  }
+
+  // name cell
+  const nameCell = document.createElement('div'); nameCell.className='name-cell';
+  // indent
+  const indentPx = 6 + t.depth * 16;
+  nameCell.style.paddingLeft = indentPx+'px';
+
+  const hasChildren = t.ch && t.ch.length > 0;
+  if(hasChildren){
+    const btn = document.createElement('button'); btn.className='collapse-btn';
+    if(collapsed.has(t.id)) btn.classList.add('is-closed');
+    btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
+    btn.onclick = e => { e.stopPropagation(); collapsed.has(t.id)?collapsed.delete(t.id):collapsed.add(t.id); render(); };
+    nameCell.appendChild(btn);
+  } else {
+    const sp = document.createElement('div'); sp.className='name-spacer'; nameCell.appendChild(sp);
+  }
+
+  if(t.type==='milestone'){
+    const dia = document.createElement('div'); dia.className='m-diamond';
+    dia.style.background = PAL[t.phase].bar;
+    nameCell.appendChild(dia);
+  }
+
+  const nt = document.createElement('span'); nt.className='name-text'; nt.textContent=t.name;
+  nameCell.appendChild(nt);
+
+  // dur / start / end cells
+  const durCell  = document.createElement('div'); durCell.className='meta-cell'; durCell.textContent=t.dur;
+  const startCell= document.createElement('div'); startCell.className='date-cell'; startCell.textContent=fmtDate(t.start);
+  const endCell  = document.createElement('div'); endCell.className='date-cell';
+  endCell.textContent = (t.type==='milestone'&&t.dur==='0 days') ? '—' : fmtDate(t.end);
+
+  left.appendChild(nameCell);
+  left.appendChild(durCell);
+  left.appendChild(startCell);
+  left.appendChild(endCell);
+
+  // ── RIGHT ─────────────────────────────────────────────────────
+  const right = document.createElement('div'); right.className='row-right';
+
+  // grid lines (month verticals)
+  MONTH_PX.forEach(mpx => {
+    const gl=document.createElement('div'); gl.className='grid-line'; gl.style.left=mpx+'px'; right.appendChild(gl);
+  });
+
+  // today line
+  const tl=document.createElement('div'); tl.className='today-line'; tl.style.left=TODAY_PX+'px'; right.appendChild(tl);
+
+  const startPx = px(t.start);
+  const endPx   = px(t.end);
+  const barW    = Math.max(endPx - startPx, t.type==='milestone'?0:3);
+
+  if(t.type==='milestone'){
+    const bar = document.createElement('div'); bar.className='g-bar bar-mile';
+    bar.style.left = startPx+'px';
+    const dia = document.createElement('div'); dia.className='mile-diamond';
+    dia.style.background = PAL[t.phase].bar;
+    bar.appendChild(dia);
+    bar.addEventListener('mouseenter', e=>showTip(e,t));
+    bar.addEventListener('mousemove', moveTip);
+    bar.addEventListener('mouseleave', hideTip);
+    right.appendChild(bar);
+  } else {
+    const bar = document.createElement('div'); bar.className='g-bar';
+    if(t.type==='phase')       bar.classList.add('bar-phase');
+    else if(t.type==='section') bar.classList.add('bar-section');
+    else                        bar.classList.add('bar-deliv');
+    bar.style.cssText += `left:${startPx}px;width:${barW}px;background:${barColor(t)};`;
+    if(t.type==='deliverable'){
+      bar.style.border = `1px solid ${PAL[t.phase].mid}`;
+    }
+    if(barW > 50){
+      const lbl=document.createElement('span'); lbl.className='bar-label';
+      lbl.style.color=barTextColor(t); lbl.textContent=t.name; bar.appendChild(lbl);
+    }
+    bar.addEventListener('mouseenter', e=>showTip(e,t));
+    bar.addEventListener('mousemove', moveTip);
+    bar.addEventListener('mouseleave', hideTip);
+    right.appendChild(bar);
+  }
+
+  row.appendChild(left);
+  row.appendChild(right);
+  return row;
+}
+
+// ── PROJECT HEADER ROW ───────────────────────────────────────────
+function renderProjectHeader(proj) {
+  const row = document.createElement('div'); row.className='proj-header-row';
+
+  const left = document.createElement('div'); left.className='proj-header-left';
+  const dot  = document.createElement('div'); dot.className='proj-header-dot';
+  dot.style.background = proj.color;
+  const name = document.createElement('span'); name.className='proj-header-name';
+  name.textContent = proj.name;
+  const meta = document.createElement('span'); meta.className='proj-header-meta';
+  const pTasks = proj.tasks || [];
+  const starts = pTasks.map(t=>t.start).sort();
+  const ends   = pTasks.map(t=>t.end).sort().reverse();
+  if (starts.length) meta.textContent = `${fmtDate(starts[0])} – ${fmtDate(ends[0])}`;
+  left.appendChild(dot); left.appendChild(name); left.appendChild(meta);
+
+  const right = document.createElement('div'); right.className='proj-header-right';
+  MONTH_PX.forEach(mpx=>{ const gl=document.createElement('div'); gl.className='grid-line'; gl.style.left=mpx+'px'; right.appendChild(gl); });
+
+  row.appendChild(left); row.appendChild(right);
+  return row;
+}
+
+// ── FILTER BAR ───────────────────────────────────────────────────
+function renderFilterBar() {
+  const bar = document.getElementById('filterBar');
+  bar.innerHTML = '';
+
+  const lbl = document.createElement('span'); lbl.className='filter-label'; lbl.textContent='Projects'; bar.appendChild(lbl);
+
+  const multiOn = activeProjects.size > 1;
+
+  PROJECTS.forEach(proj => {
+    const chip = document.createElement('div'); chip.className='proj-chip';
+    const isActive = activeProjects.has(proj.id);
+    if (isActive) { chip.classList.add('active'); chip.style.background=proj.color; chip.style.color='#fff'; chip.style.borderColor=proj.color; }
+
+    const chk = document.createElement('div'); chk.className='chip-check'; chip.appendChild(chk);
+    const dot = document.createElement('div'); dot.className='chip-dot'; dot.style.background = isActive ? 'rgba(255,255,255,.5)' : proj.color; chip.appendChild(dot);
+    const lbl2 = document.createElement('span'); lbl2.textContent = proj.name; chip.appendChild(lbl2);
+    const cnt = document.createElement('span'); cnt.className='chip-count';
+    cnt.textContent = (proj.tasks||[]).length; chip.appendChild(cnt);
+
+    chip.onclick = () => {
+      if (activeProjects.has(proj.id)) {
+        if (activeProjects.size > 1) activeProjects.delete(proj.id);
+      } else {
+        activeProjects.add(proj.id);
+      }
+      renderFilterBar(); render();
+    };
+    bar.appendChild(chip);
+  });
+
+  if (activeProjects.size < PROJECTS.length) {
+    const sep = document.createElement('div'); sep.className='filter-sep'; bar.appendChild(sep);
+    const clr = document.createElement('button'); clr.className='filter-clear'; clr.textContent='Show All';
+    clr.onclick = () => { PROJECTS.forEach(p=>activeProjects.add(p.id)); renderFilterBar(); render(); };
+    bar.appendChild(clr);
+  }
+}
+
+// ── RENDER ────────────────────────────────────────────────────────
+function render() {
+  const table = document.getElementById('ganttTable');
+  table.innerHTML = '';
+
+  // sticky header
+  const thead = document.createElement('div'); thead.className='gantt-thead';
+  const tl = document.createElement('div'); tl.className='thead-left';
+  const tc = document.createElement('div'); tc.className='thead-cols';
+  ['Name','Duration','Start','Finish'].forEach(h=>{
+    const el=document.createElement('div'); el.className='thead-col'; el.textContent=h; tc.appendChild(el);
+  });
+  tl.appendChild(tc);
+  thead.appendChild(tl);
+  thead.appendChild(buildHeader());
+  table.appendChild(thead);
+
+  const visibleProjects = PROJECTS.filter(p => activeProjects.has(p.id));
+  const multiProject = visibleProjects.length > 1;
+
+  visibleProjects.forEach(proj => {
+    // project separator header when multiple are shown
+    if (multiProject) table.appendChild(renderProjectHeader(proj));
+
+    const rows = flatten(proj.tasks || []);
+    rows.forEach(t => {
+      if (!t.hidden) table.appendChild(renderRow(t));
+    });
+  });
+}
+
+// ── TOOLTIP ───────────────────────────────────────────────────────
+const tip = document.getElementById('tip');
+const TYPE_LABEL = { phase:'Phase', section:'Sub-phase', deliverable:'Deliverable', milestone:'Milestone' };
+function showTip(e,t){
+  tip.innerHTML=`<div class="tip-title">${t.name}</div><div class="tip-meta">${TYPE_LABEL[t.type]||''} · ${t.dur}</div><div class="tip-meta">Start: ${t.start} &nbsp;&nbsp; End: ${t.end}</div>`;
+  tip.classList.add('show'); moveTip(e);
+}
+function moveTip(e){ tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY-10)+'px'; }
+function hideTip(){ tip.classList.remove('show'); }
+
+// ── SCROLL TO TODAY ───────────────────────────────────────────────
+function scrollToToday(){
+  document.getElementById('ganttScroll').scrollLeft = Math.max(0, TODAY_PX - 300);
+}
+
+// ── EXPAND / COLLAPSE ALL ─────────────────────────────────────────
+function expandAll(){ collapsed.clear(); render(); }
+function collapseAll(){
+  function mark(items){ items.forEach(t=>{ if(t.ch&&t.ch.length){ collapsed.add(t.id); mark(t.ch); } }); }
+  PROJECTS.forEach(p => mark(p.tasks||[])); render();
+}
+
+// ── VIEW SWITCH ───────────────────────────────────────────────────
+function switchView(v, btn){
+  document.querySelectorAll('.vtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('task-view').style.display    = v==='task'     ? '' : 'none';
+  document.getElementById('specbook-view').style.display = v==='specbook' ? 'flex' : 'none';
+}
+
+// ── COLUMN RESIZER — attaches once to persistent element ─────────
+function initResize() {
+  const handle = document.getElementById('colResizer');
+  if (!handle) return;
+
+  handle.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--left-w')) || 340;
+
+    handle.classList.add('dragging');
+    document.body.classList.add('col-resizing');
+
+    function onMove(e) {
+      const newW = Math.max(180, Math.min(800, startW + (e.clientX - startX)));
+      document.documentElement.style.setProperty('--left-w', newW + 'px');
+    }
+
+    function onUp() {
+      handle.classList.remove('dragging');
+      document.body.classList.remove('col-resizing');
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    }
+
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+renderFilterBar();
+render();
+scrollToToday();
+initResize();
+</script>
+</body>
+</html>
