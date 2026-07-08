@@ -228,9 +228,17 @@ body {
 .date-cell {
   font-size: 11px; color: var(--n-500,#8a8c96);
   font-variant-numeric: tabular-nums; align-self: center; padding-right: 6px;
+  cursor: pointer; border-radius: 4px; padding: 2px 4px; transition: background .12s;
 }
+.date-cell:hover { background: var(--n-100); color: var(--n-800); }
 .no-date-cell { font-size: 10px; color: var(--n-300); align-self: center; font-style: italic; padding-right: 6px; }
 .days-cell { color: var(--n-400); }
+.cell-input {
+  font-family: 'Jost', sans-serif; font-size: 11px; font-variant-numeric: tabular-nums;
+  color: var(--n-800); border: 1px solid var(--s-400); border-radius: 4px;
+  background: var(--white); padding: 1px 4px; width: 100%; outline: none;
+  box-shadow: 0 0 0 2px rgba(90,120,180,.15);
+}
 
 /* ── RIGHT AREA ── */
 .row-right { flex: 1; position: relative; min-height: var(--row-min); }
@@ -2206,6 +2214,57 @@ function gridPositions() {
 }
 let GRID = gridPositions();
 
+// ── INLINE EDITING ────────────────────────────────────────────────
+function addDays(dateStr, days) {
+  const d = new Date(toUTC(dateStr)); d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0,10);
+}
+
+function makeEditableDate(t, field) {
+  const cell = document.createElement('div'); cell.className='date-cell';
+  function refresh() { cell.textContent = fmtDate(t[field]) || '—'; }
+  refresh();
+  cell.onclick = e => {
+    e.stopPropagation();
+    const inp = document.createElement('input'); inp.type='date'; inp.className='cell-input';
+    inp.value = t[field] || '';
+    cell.textContent = ''; cell.appendChild(inp); inp.focus();
+    const save = () => {
+      const val = inp.value;
+      t[field] = val || null;
+      render();
+    };
+    inp.onblur = save;
+    inp.onkeydown = e => { if(e.key==='Enter') inp.blur(); if(e.key==='Escape'){ t[field]=t[field]; refresh(); } };
+  };
+  return cell;
+}
+
+function makeEditableWeeks(t) {
+  const cell = document.createElement('div'); cell.className='date-cell days-cell';
+  function refresh() {
+    const w = t.start&&t.end ? Math.round((toUTC(t.end)-toUTC(t.start))/604800000) : null;
+    cell.textContent = w!==null ? w+'w' : '—';
+  }
+  refresh();
+  cell.onclick = e => {
+    e.stopPropagation();
+    if(!t.start){ cell.textContent='Set start first'; setTimeout(refresh,1200); return; }
+    const curW = t.start&&t.end ? Math.round((toUTC(t.end)-toUTC(t.start))/604800000) : 0;
+    const inp = document.createElement('input'); inp.type='number'; inp.className='cell-input';
+    inp.min='0'; inp.step='1'; inp.value = curW;
+    cell.textContent=''; cell.appendChild(inp); inp.focus(); inp.select();
+    const save = () => {
+      const w = parseInt(inp.value,10);
+      if(!isNaN(w) && w>=0) t.end = addDays(t.start, w*7);
+      render();
+    };
+    inp.onblur = save;
+    inp.onkeydown = e => { if(e.key==='Enter') inp.blur(); if(e.key==='Escape') refresh(); };
+  };
+  return cell;
+}
+
 // ── RENDER ROW ────────────────────────────────────────────────────
 function renderRow(t) {
   const row = document.createElement('div'); row.className='g-row';
@@ -2243,10 +2302,10 @@ function renderRow(t) {
     const tag=document.createElement('span'); tag.className='project-tag'; tag.textContent=t.tag; nameCell.appendChild(tag);
   }
 
-  const startCell=document.createElement('div'); startCell.className='date-cell'; startCell.textContent=fmtDate(t.start);
-  const endCell=document.createElement('div');   endCell.className='date-cell';   endCell.textContent=fmtDate(t.end);
+  const startCell=makeEditableDate(t,'start');
+  const endCell=makeEditableDate(t,'end');
   const weeks=t.start&&t.end?Math.round((toUTC(t.end)-toUTC(t.start))/604800000):null;
-  const daysCell=document.createElement('div'); daysCell.className='date-cell days-cell'; daysCell.textContent=weeks!==null?weeks+'w':'—';
+  const daysCell=makeEditableWeeks(t);
 
   left.appendChild(nameCell); left.appendChild(startCell); left.appendChild(endCell); left.appendChild(daysCell);
 
