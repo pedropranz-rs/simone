@@ -397,15 +397,14 @@ body.col-resizing { cursor: col-resize !important; user-select: none !important;
   <main class="main-panel">
     <div class="toolbar">
       <div class="toolbar-title">Project Planning</div>
-      <div class="toolbar-right">
-        <button class="today-btn" onclick="scrollToToday()">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Today
-        </button>
-      </div>
     </div>
 
     <div class="filter-bar">
+      <button class="today-btn" onclick="scrollToToday()">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Today
+      </button>
+      <div style="width:1px;height:16px;background:var(--n-200);margin:0 6px;"></div>
       <button class="zoom-btn" onclick="setZoom('week')">Week</button>
       <button class="zoom-btn active" onclick="setZoom('month')">Month</button>
       <button class="zoom-btn" onclick="setZoom('quarter')">Quarter</button>
